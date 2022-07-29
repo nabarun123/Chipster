@@ -192,7 +192,7 @@ function App() {
                         color: "green",
                       }}
                     >
-                      {item.change_p}%
+                      +{item.change_p}%
                     </div>
                   ) : (
                     <div
@@ -218,7 +218,7 @@ function App() {
                         color: "green",
                       }}
                     >
-                      {item.change}
+                      +{item.change}
                     </div>
                   ) : (
                     <div
@@ -303,7 +303,7 @@ function App() {
                         color: "green",
                       }}
                     >
-                      {item.change_p}%
+                      +{item.change_p}%
                     </div>
                   ) : (
                     <div
@@ -329,7 +329,7 @@ function App() {
                         color: "green",
                       }}
                     >
-                      {item.change}
+                      +{item.change}
                     </div>
                   ) : (
                     <div
