@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import TrendingDownIcon from "@mui/icons-material/TrendingDown";
-import noData from "./assets/no_data.gif";
-import "./App.css";
+import MarketData from "./components/MarketData";
+import CountryButton from "./components/CountryButton";
 
 /*
 
@@ -17,342 +15,43 @@ To run the program:
 
 function App() {
   /* to set the US data */
-  const [usData, setUsData] = useState([]);
-  /* to set the EUROPE data */
-  const [europeData, setEuropeData] = useState([]);
-  /* to set onClick on US button */
-  const [usClick, setUsClick] = useState(false);
-  /* to set onClick on EUROPE button */
-  const [europeClick, setEuropeClick] = useState(false);
-  /* to set onClick on other three buttons */
-  const [otherButtonClick, setOtherButtonClick] = useState();
+  const [country, setCountry] = useState("US");
+  const [data, setData] = useState([]);
+  const [countryList, setCountryList] = useState([]);
 
   /* to get the data from JSON server */
   const getData = () => {
-    /* fetching the US data */
-    fetch("http://localhost:3000/US")
+    fetch(`http://localhost:3000/total`)
       .then((response) => response.json())
-      .then((responseData) => setUsData(responseData))
-      .catch((error) => {
-        console.log(error);
-      });
-
-    /* fetching the EUROPE data */
-    fetch("http://localhost:3000/EUROPE")
-      .then((response) => response.json())
-      .then((responseData) => setEuropeData(responseData))
+      .then((responseData) => {
+        // console.log(responseData);
+        setData(responseData);
+        setCountryList(Object.keys(responseData)); // US, EUROPE, ASIA
+      })
       .catch((error) => {
         console.log(error);
       });
   };
-  // console.log(usData);
-  // console.log(europeData);
 
   /* to give some side effect. Here to fetch the data on the screen */
   useEffect(() => {
     getData();
-    setUsClick(true);
-    setEuropeClick(false);
   }, []);
-
-  /* functionality of US button */
-  const onUsClick = () => {
-    setUsClick(true);
-    setEuropeClick(false);
-    setOtherButtonClick("");
-  };
-
-  /* functionality of EUROPE button */
-  const onEuropeClick = () => {
-    setEuropeClick(true);
-    setUsClick(false);
-    setOtherButtonClick("");
-  };
-
-  /* functionality of Other three button */
-  const onOtherButtonClick = () => {
-    setOtherButtonClick({ noData });
-    setUsClick(false);
-    setEuropeClick(false);
-  };
 
   return (
     /* JSX starts here */
     <div className="App" style={{ marginTop: "5%" }}>
+      {/* calling the CountryButton component and passing setCountry as a prop */}
+      <CountryButton setCountry={setCountry} countryList={countryList} />
       <div
-        class="btn-group"
-        role="group"
-        aria-label="Basic outlined example"
-        style={{ marginBottom: "2%" }}
+        style={{
+          display: "flex",
+          justifyContent: "space-evenly",
+          marginTop: "35px",
+        }}
       >
-        <button
-          /* US button */
-          type="button"
-          class="btn btn-outline-primary"
-          onClick={onUsClick}
-        >
-          US
-        </button>
-
-        <button
-          /* US button */
-          type="button"
-          class="btn btn-outline-primary"
-          onClick={onEuropeClick}
-        >
-          EUROPE
-        </button>
-
-        <button
-          /* Other buttons */
-          type="button"
-          class="btn btn-outline-primary"
-          onClick={onOtherButtonClick}
-        >
-          ASIA
-        </button>
-
-        <button
-          type="button"
-          class="btn btn-outline-primary"
-          onClick={onOtherButtonClick}
-        >
-          CURRENCIES
-        </button>
-        <button
-          type="button"
-          class="btn btn-outline-primary"
-          onClick={onOtherButtonClick}
-        >
-          CRYPTO
-        </button>
-      </div>
-
-      {usClick && (
-        /* on click of US button getting the results  */
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-evenly",
-            marginTop: "35px",
-          }}
-        >
-          {usData.map((item) => {
-            /* getting the results via map() function  */
-
-            return (
-              <>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    marginTop: "8px",
-                    marginLeft: "35px",
-                  }}
-                >
-                  {item.change > 0 ? (
-                    /* toggling the Stock up arrow & down arrow along with color  */
-                    <TrendingUpIcon color="success" fontSize="large" />
-                  ) : (
-                    <TrendingDownIcon color="error" fontSize="large" />
-                  )}
-                </div>
-
-                <span>
-                  <div
-                    /* fetching names  */
-                    style={{
-                      fontWeight: "bolder",
-                      display: "flex",
-                      justifyContent: "start",
-                    }}
-                  >
-                    {item.name}
-                  </div>
-
-                  <div
-                    /* fetching close  */
-                    style={{
-                      display: "flex",
-                      justifyContent: "start",
-                    }}
-                  >
-                    {item.close}
-                  </div>
-                </span>
-
-                <span style={{ marginRight: "35px" }}>
-                  {item.change_p > 0 ? (
-                    <div
-                      /* fetching change_p along with toggling the color  by using Ternary operator  */
-                      style={{
-                        fontWeight: "bolder",
-                        display: "flex",
-                        justifyContent: "start",
-                        color: "green",
-                      }}
-                    >
-                      +{item.change_p}%
-                    </div>
-                  ) : (
-                    <div
-                      style={{
-                        fontWeight: "bolder",
-                        display: "flex",
-                        justifyContent: "start",
-                        color: "red",
-                      }}
-                    >
-                      {item.change_p}%
-                    </div>
-                  )}
-
-                  {item.change > 0 ? (
-                    <div
-                      /* fetching change along with toggling the color  by using Ternary operator  */
-
-                      style={{
-                        fontWeight: "bolder",
-                        display: "flex",
-                        justifyContent: "start",
-                        color: "green",
-                      }}
-                    >
-                      +{item.change}
-                    </div>
-                  ) : (
-                    <div
-                      style={{
-                        fontWeight: "bolder",
-                        display: "flex",
-                        justifyContent: "start",
-                        color: "red",
-                      }}
-                    >
-                      {item.change}
-                    </div>
-                  )}
-                </span>
-              </>
-            );
-          })}
-        </div>
-      )}
-
-      {europeClick && (
-        /* on click of EUROPE button getting the results  */
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-evenly",
-            marginTop: "35px",
-          }}
-        >
-          {europeData.map((item) => {
-            /* getting the results via map() function  */
-
-            return (
-              <>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    marginTop: "8px",
-                    marginLeft: "35px",
-                  }}
-                >
-                  {item.change > 0 ? (
-                    /* toggling the Stock up arrow & down arrow along with color  */
-                    <TrendingUpIcon color="success" fontSize="large" />
-                  ) : (
-                    <TrendingDownIcon color="error" fontSize="large" />
-                  )}
-                </div>
-
-                <span>
-                  <div
-                    /* fetching names  */
-                    style={{
-                      fontWeight: "bolder",
-                      display: "flex",
-                      justifyContent: "start",
-                    }}
-                  >
-                    {item.name}
-                  </div>
-
-                  <div
-                    /* fetching close  */
-                    style={{
-                      display: "flex",
-                      justifyContent: "start",
-                    }}
-                  >
-                    {item.close}
-                  </div>
-                </span>
-
-                <span style={{ marginRight: "35px" }}>
-                  {item.change_p > 0 ? (
-                    <div
-                      /* fetching change_p along with toggling the color by using Ternary operator  */
-                      style={{
-                        fontWeight: "bolder",
-                        display: "flex",
-                        justifyContent: "start",
-                        color: "green",
-                      }}
-                    >
-                      +{item.change_p}%
-                    </div>
-                  ) : (
-                    <div
-                      style={{
-                        fontWeight: "bolder",
-                        display: "flex",
-                        justifyContent: "start",
-                        color: "red",
-                      }}
-                    >
-                      {item.change_p}%
-                    </div>
-                  )}
-
-                  {item.change > 0 ? (
-                    <div
-                      /* fetching change along with toggling the color  by using Ternary operator  */
-
-                      style={{
-                        fontWeight: "bolder",
-                        display: "flex",
-                        justifyContent: "start",
-                        color: "green",
-                      }}
-                    >
-                      +{item.change}
-                    </div>
-                  ) : (
-                    <div
-                      style={{
-                        fontWeight: "bolder",
-                        display: "flex",
-                        justifyContent: "start",
-                        color: "red",
-                      }}
-                    >
-                      {item.change}
-                    </div>
-                  )}
-                </span>
-              </>
-            );
-          })}
-        </div>
-      )}
-
-      <div /* on click of other three buttons, since we don't have data to fetch so, i have used on gif display to look even better */
-      >
-        {otherButtonClick && <img src={noData} height="395px" />}
+        {/* calling the MarketData component and passing data as a prop */}
+        <MarketData data={data[country]} />
       </div>
     </div>
   );
